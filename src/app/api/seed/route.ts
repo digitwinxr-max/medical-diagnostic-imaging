@@ -429,10 +429,17 @@ async function fetchOrthancStudies(): Promise<OrthancStudyLite[]> {
     return list.map((study) => {
       const rawName = study["00100010"]?.Value?.[0];
       const patientName = typeof rawName === "string" ? rawName : (rawName as { Alphabetic?: string } | undefined)?.Alphabetic ?? null;
+
+      const rawUid = study["0020000D"]?.Value?.[0];
+      const studyInstanceUid = typeof rawUid === "string" ? rawUid : (rawUid as { Alphabetic?: string } | undefined)?.Alphabetic ?? "";
+
+      // ModalitiesInStudy (0008,0061); fall back to Modality (0008,0060).
+      const rawModalities = study["00080061"]?.Value?.[0] ?? study["00080060"]?.Value?.[0];
+      const modalities = typeof rawModalities === "string" ? rawModalities : (rawModalities as { Alphabetic?: string } | undefined)?.Alphabetic ?? "";
+
       return {
-        studyInstanceUid: study["0020000D"]?.Value?.[0] ?? "",
-        // ModalitiesInStudy (0008,0061); fall back to Modality (0008,0060).
-        modalities: study["00080061"]?.Value?.[0] ?? study["00080060"]?.Value?.[0] ?? "",
+        studyInstanceUid,
+        modalities,
         patientName,
       };
     }).filter((s) => s.studyInstanceUid);
