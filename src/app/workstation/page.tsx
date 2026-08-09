@@ -30,6 +30,7 @@ import {
   X,
   Command,
 } from "lucide-react";
+import { ClinicalHealthStrip } from "@/components/workstation/clinical-health-strip";
 
 function WorkstationLayout() {
   const { layout, updateLayout, prevStudy, nextStudy, toggleBookmark, runAiReview, signReport, releaseStudy, fullscreen, toggleFullscreen } = useWorkstation();
@@ -136,6 +137,11 @@ function WorkstationLayout() {
             {fullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </button>
         </div>
+      </div>
+
+      {/* Clinical stack health strip — compact, not dominant */}
+      <div className="flex shrink-0 items-center justify-center border-b border-slate-200 bg-white px-3 py-1.5 dark:border-slate-800 dark:bg-slate-950">
+        <ClinicalHealthStrip onOpenDrawer={() => window.dispatchEvent(new CustomEvent("workstation:open-health-drawer"))} />
       </div>
 
       {/* Main grid: left | centre | right */}
