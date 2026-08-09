@@ -167,6 +167,39 @@ export default function CommandCentrePage() {
 
   return (
     <Shell title="Operations Command Centre" description="Real-time diagnostic imaging operations — refreshed every 10 seconds">
+      {/* Canonical clinical entry — single localhost gateway */}
+      <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <Link href="/workstation" className="group flex items-center justify-between rounded-xl border border-[var(--color-gerald-teal)] bg-[var(--color-gerald-teal)] px-5 py-4 text-white shadow-sm transition-all hover:bg-[var(--color-gerald-teal-deep)] hover:shadow-md">
+          <div>
+            <p className="text-sm font-bold tracking-tight">OPEN RADIOLOGY WORKSTATION</p>
+            <p className="text-xs text-white/80">Worklist → OHIF → Reporting</p>
+          </div>
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </Link>
+        <Link href="/workstation/demo" className="group flex items-center justify-between rounded-xl border border-amber-300 bg-amber-400 px-5 py-4 text-slate-900 shadow-sm transition-all hover:bg-amber-300">
+          <div>
+            <p className="text-sm font-bold tracking-tight">OPEN CT BRAIN DEMO</p>
+            <p className="text-xs text-slate-700">GH-100001 · Real DICOM · One click</p>
+          </div>
+          <ScanSearch className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </Link>
+        <Link href="/system/health" className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm transition-all hover:border-brand/40 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800">
+          <div>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">SYSTEM HEALTH</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Postgres · Orthanc · OHIF · Redis</p>
+          </div>
+          <Monitor className="h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </div>
+
+      {/* Quick links — patients / worklist / reporting */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        <Link href="/reception"><Button variant="outline" size="sm" className="gap-1"><Users className="h-3.5 w-3.5" /> Patients / Worklist</Button></Link>
+        <Link href="/reporting"><Button variant="outline" size="sm" className="gap-1"><FileText className="h-3.5 w-3.5" /> Reporting</Button></Link>
+        <Link href="/review"><Button variant="outline" size="sm" className="gap-1"><ScanSearch className="h-3.5 w-3.5" /> AI Review</Button></Link>
+        <Link href="/clinical"><Button variant="outline" size="sm" className="gap-1"><Activity className="h-3.5 w-3.5" /> Clinical Portal</Button></Link>
+      </div>
+
       {/* Empty state + live indicator row */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         {isEmpty && !seeded ? (

@@ -108,16 +108,16 @@ try {
   Write-Host "  System health: $($h.status) clinicalReady=$($h.clinicalReady)" -ForegroundColor Green
 } catch { Write-Host "  Could not fetch /api/system/health yet — will be available once GeraldOS ready" -ForegroundColor Yellow }
 
-# Final URLs — ONLY primary URLs as specified
+# Final URLs — ONLY primary URLs as specified (exact strings required for verification)
 Write-Host ""
 Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "GERALDOS LOCAL CLINICAL PLATFORM READY" -ForegroundColor Green
+Write-Host "GERALDOS LOCAL PREVIEW READY" -ForegroundColor Green
 Write-Host "========================================================" -ForegroundColor Cyan
-Write-Host "MAIN PLATFORM:" -ForegroundColor Yellow
-Write-Host "  http://localhost:3000" -ForegroundColor White
-Write-Host "CLINICAL WORKSTATION:" -ForegroundColor Yellow
+Write-Host "PRIMARY APPLICATION:" -ForegroundColor Yellow
+Write-Host "  http://localhost:3000/" -ForegroundColor White
+Write-Host "WORKSTATION:" -ForegroundColor Yellow
 Write-Host "  http://localhost:3000/workstation" -ForegroundColor White
-Write-Host "ONE-CLICK CT DEMO:" -ForegroundColor Yellow
+Write-Host "ONE-CLICK CT BRAIN DEMO:" -ForegroundColor Yellow
 Write-Host "  http://localhost:3000/workstation/demo" -ForegroundColor Cyan
 Write-Host "SYSTEM HEALTH:" -ForegroundColor Yellow
 Write-Host "  http://localhost:3000/system/health" -ForegroundColor White
@@ -137,3 +137,11 @@ Write-Host "  LangGraph (agents)  8123  (docker compose --profile agents up -d)"
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host "Demo CT Brain: 1.2.826.0.1.3680043.8.498.71728362602630272973159058458427063809" -ForegroundColor DarkCyan
 Write-Host "Next: open http://localhost:3000/workstation/demo and verify CT pixels render inside GeraldOS" -ForegroundColor White
+
+# Automatically open primary application in default browser (if safe)
+try {
+  Write-Host "Opening http://localhost:3000/ in default browser..." -ForegroundColor DarkCyan
+  Start-Process "http://localhost:3000/" -ErrorAction SilentlyContinue | Out-Null
+} catch {
+  Write-Host "Could not auto-open browser — please open http://localhost:3000/ manually" -ForegroundColor Yellow
+}
