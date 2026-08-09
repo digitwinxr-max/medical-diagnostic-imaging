@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { discoverOidc, buildAuthorizationUrl, keycloakConfigured } from "@/lib/auth/oidc";
+import { sessionCookieOptions } from "@/lib/auth/session";
 import { v4 as uuid } from "uuid";
 
 export const dynamic = "force-dynamic";
@@ -14,10 +15,12 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${request.nextUrl.origin}/api/auth/callback`;
     const url = buildAuthorizationUrl(oidc, redirectUri, state);
     const res = NextResponse.redirect(url);
+    const baseOpts = sessionCookieOptions();
     res.cookies.set("geraldos_oauth_state", state, {
       httpOnly: true,
-      sameSite: "lax",
-      path: "/",
+      sameSite: baseOpts.sameSite,
+      path: baseOpts.path,
+      secure: baseOpts.secure,
       maxAge: 600,
     });
     return res;

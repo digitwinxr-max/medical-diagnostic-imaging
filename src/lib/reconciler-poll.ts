@@ -8,7 +8,7 @@ import { reconcileOnce } from "./orthanc-reconciler";
 let timer: NodeJS.Timeout | null = null;
 let running = false;
 
-export function startReconcilerPoll(intervalMs = 15_000) {
+export function startReconcilerPoll(intervalMs = 5_000) {
   if (timer) return; // already started (HMR-safe)
   if (process.env.GERALDOS_RECONCILER_POLL === "0") return;
   if (!process.env.ORTHANC_URL) return;
