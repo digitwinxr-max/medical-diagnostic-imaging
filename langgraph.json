@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "geraldos-agent": "./services/langgraph_agent.py:graph"
+  },
+  "env": ".env"
+}

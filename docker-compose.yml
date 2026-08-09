@@ -104,14 +104,25 @@ services:
       retries: 10
 
   langgraph:
-    # LangGraph Platform self-hosted runtime (requires LANGSMITH_API_KEY).
-    # For local graphs: `langgraph dev` also exposes the same /ok + /threads API on :8123.
-    image: langchain/langgraph-api:latest
+    # GeraldOS LangGraph — local build (no cloud dependency).
+    # Clinical stack starts WITHOUT this service. Run explicitly:
+    #   docker compose --profile agents up -d langgraph
+    # Or: docker compose --profile agents build langgraph
+    profiles: ["agents"]
+    build:
+      context: .
+      dockerfile: services/Dockerfile.langgraph
+    image: geraldos/langgraph:dev
     ports: ["8123:8000"]
     environment:
       REDIS_URI: redis://redis:6379
       DATABASE_URI: postgres://postgres:postgres@postgres:5432/app_db
       LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ok || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
     depends_on:
       - redis
       - postgres

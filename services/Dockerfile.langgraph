@@ -1,0 +1,37 @@
+# GeraldOS LangGraph — local build via official LangGraph CLI pattern
+# Reproduces `langgraph dockerfile` output without requiring LangSmith cloud.
+# Built as: docker compose --profile agents build langgraph
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# System deps for psycopg2
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev curl && rm -rf /var/lib/apt/lists/*
+
+# Copy dependency manifests
+COPY backend/requirements.txt ./backend/requirements.txt
+COPY langgraph.json ./langgraph.json
+
+# Install Python deps (pin langgraph to backend version)
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
+# Copy graphs and app code
+COPY services/ ./services/
+COPY backend/ ./backend/
+
+# Expose LangGraph API (Platform-compatible endpoints used by Next.js)
+# Next.js expects: POST /threads, POST /threads/:id/runs/wait, GET /ok
+ENV LANGGRAPH_HOST=0.0.0.0
+ENV LANGGRAPH_PORT=8000
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+# Healthcheck — matches compose healthcheck
+HEALTHCHECK --interval=10s --timeout=5s --retries=20 CMD curl -f http://localhost:8000/ok || exit 1
+
+# Minimal Platform-compatible server wrapping the compiled graph
+# Implements /ok, POST /threads, POST /threads/:id/runs/wait via FastAPI
+COPY services/langgraph_server.py ./services/langgraph_server.py
+
+CMD ["python", "-m", "uvicorn", "services.langgraph_server:app", "--host", "0.0.0.0", "--port", "8000"]
