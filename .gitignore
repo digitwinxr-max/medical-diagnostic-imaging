@@ -14,6 +14,14 @@ out/
 .env.*
 !.env.example
 
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+.venv/
+*.egg-info/
+
 # Freebuff desktop workspace database (binary — must never be scanned/committed)
 .freebuff/
 *.db
