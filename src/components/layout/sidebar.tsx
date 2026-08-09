@@ -23,6 +23,9 @@ import {
   MonitorSmartphone,
   PanelLeftClose,
   PanelLeftOpen,
+  LayoutDashboard,
+  HeartPulse,
+  ShieldCheck,
 } from "lucide-react";
 
 // accent: subtle semantic tint per section (active state only) —
@@ -34,18 +37,20 @@ const navigation: {
   badge?: string;
   accent?: string;
 }[] = [
+  { name: "Command Centre", href: "/", icon: LayoutDashboard },
+  { name: "Clinical", href: "/clinical", icon: HeartPulse },
   { name: "Workstation", href: "/workstation", icon: MonitorSmartphone, badge: "Primary" },
-  { name: "Command Centre", href: "/", icon: Activity },
+  { name: "Imaging", href: "/imaging", icon: Image },
   { name: "Reception", href: "/reception", icon: UserPlus },
   { name: "Scheduling", href: "/scheduling", icon: Calendar },
   { name: "Workflow", href: "/workflow", icon: GitBranch },
-  { name: "Imaging", href: "/imaging", icon: Image },
   { name: "AI Review", href: "/review", icon: ScanSearch, accent: "text-ai" },
   { name: "Reporting", href: "/reporting", icon: FileText },
   { name: "Knowledge", href: "/knowledge", icon: BookOpen },
   { name: "Equipment", href: "/equipment", icon: Wrench, accent: "text-operational" },
   { name: "Inventory", href: "/inventory", icon: Package },
   { name: "Finance", href: "/finance", icon: Receipt, accent: "text-premium" },
+  { name: "System Health", href: "/system/health", icon: ShieldCheck },
   { name: "Administration", href: "/administration", icon: Building2 },
   { name: "AI Agents", href: "/agents", icon: Bot, accent: "text-ai" },
   { name: "Settings", href: "/settings", icon: Settings },
