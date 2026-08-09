@@ -11,8 +11,26 @@ export interface SessionUser {
 }
 
 function secretKey(): Uint8Array {
-  const secret = process.env.AUTH_SECRET ?? "geraldos-dev-secret-change-me";
-  return new TextEncoder().encode(secret);
+  const secret = process.env.AUTH_SECRET;
+  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  if (isProd) {
+    if (!secret || secret.length < 32) {
+      throw new Error("AUTH_SECRET must be at least 32 characters in production");
+    }
+    return new TextEncoder().encode(secret);
+  }
+  return new TextEncoder().encode(secret ?? "geraldos-dev-secret-change-me-not-for-production");
+}
+
+export function sessionCookieOptions() {
+  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  return {
+    httpOnly: true as const,
+    sameSite: "lax" as const,
+    path: "/" as const,
+    secure: isProd,
+    maxAge: 60 * 60 * 8,
+  };
 }
 
 export async function createSessionToken(user: SessionUser, maxAgeSec = 60 * 60 * 8): Promise<string> {

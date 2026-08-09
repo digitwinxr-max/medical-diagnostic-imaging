@@ -304,5 +304,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, ...out });
+  return NextResponse.json({ ok: true, ...out }, { headers: { "Cache-Control": "no-store" } });
 }

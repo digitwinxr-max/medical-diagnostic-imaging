@@ -5,7 +5,7 @@ import {
   verifyIdToken,
   extractRoles,
 } from "@/lib/auth/oidc";
-import { createSessionToken, SESSION_COOKIE } from "@/lib/auth/session";
+import { createSessionToken, SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth/session";
 import { recordAudit } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
@@ -44,12 +44,7 @@ export async function GET(request: NextRequest) {
     });
 
     const res = NextResponse.redirect(new URL("/", origin));
-    res.cookies.set(SESSION_COOKIE, sessionToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 8,
-    });
+    res.cookies.set(SESSION_COOKIE, sessionToken, sessionCookieOptions());
     res.cookies.delete("geraldos_oauth_state");
     return res;
   } catch (error) {

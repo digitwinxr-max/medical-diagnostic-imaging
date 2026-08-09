@@ -10,6 +10,10 @@ export const dynamic = "force-dynamic";
  * wired up (or when DEV_AUTH=true). Keeps the platform demoable in degraded mode.
  */
 export async function GET(request: NextRequest) {
+  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  if (isProd) {
+    return NextResponse.redirect(new URL("/login?error=dev_auth_disabled", request.nextUrl.origin));
+  }
   const allowDev = !keycloakConfigured() || process.env.DEV_AUTH === "true";
   if (!allowDev) {
     return NextResponse.redirect(new URL("/login?error=dev_auth_disabled", request.nextUrl.origin));
@@ -31,11 +35,7 @@ export async function GET(request: NextRequest) {
   });
 
   const res = NextResponse.redirect(new URL("/", request.nextUrl.origin));
-  res.cookies.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 8,
-  });
+  const { sessionCookieOptions } = await import("@/lib/auth/session");
+  res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
   return res;
 }

@@ -83,9 +83,9 @@ describe("AI Review Assistant", () => {
     });
 
     it("should include a critical candidate for high confidence findings", () => {
-      // Run multiple times to check for critical candidates
+      // Run multiple times to check for critical candidates (random ~16% per run; 30 runs = ~99.6% chance)
       let hasCritical = false;
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 30; i++) {
         const candidates = generateCandidates({ modality: "CT" });
         if (candidates.some((c) => c.category === "critical")) {
           hasCritical = true;

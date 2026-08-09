@@ -263,6 +263,9 @@ function AiTab() {
         </button>
       </div>
 
+      <p className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1.5 text-center text-[9px] font-bold uppercase tracking-wider text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+        SIMULATION / DEVELOPMENT ONLY — NOT CLINICAL INFERENCE
+      </p>
       <p className="flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[10px] leading-relaxed text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
         <ShieldCheck className="mt-0.5 h-3 w-3 flex-shrink-0" />
         Decision support only. Every observation is a candidate — accept or reject it. The AI never makes the diagnosis.

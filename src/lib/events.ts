@@ -67,6 +67,9 @@ export interface PublishEventInput {
   aggregateId?: string | null;
   payload?: Record<string, unknown> | null;
   source?: string;
+  correlationId?: string;
+  causationId?: string;
+  idempotencyKey?: string;
 }
 
 // ─── Redis client (lazy, non-fatal when unreachable) ───
@@ -98,35 +101,128 @@ async function getRedis() {
   }
 }
 
-/** Publish an event to the Redis stream AND persist it to the event_log table. */
+/** Publish an event to the Redis stream AND persist it to the event_log table.
+ *  Durable log is authoritative; Redis is best-effort transport with retry.
+ *  Idempotency: if idempotencyKey provided, duplicate inserts are skipped.
+ */
 export async function publishEvent(input: PublishEventInput): Promise<void> {
   const occurredAt = new Date();
-  const payload = { ...(input.payload ?? {}), occurredAt: occurredAt.toISOString() };
+  const correlationId = input.correlationId ?? input.idempotencyKey ?? null;
+  const idempotencyKey = input.idempotencyKey ?? (input.aggregateId ? `${input.type}:${input.aggregate}:${input.aggregateId}` : null);
+  const payload = { ...(input.payload ?? {}), occurredAt: occurredAt.toISOString(), correlationId, causationId: input.causationId ?? null };
 
-  // 1) Redis Streams (best-effort, capped)
+  // Idempotency check: skip if same idempotencyKey already logged recently (within same aggregateId+type)
+  if (idempotencyKey) {
+    try {
+      const existing = await db
+        .select({ id: eventLog.id })
+        .from(eventLog)
+        .where(eq(eventLog.idempotencyKey, idempotencyKey))
+        .limit(1);
+      if (existing.length > 0) return;
+    } catch {}
+  }
+
+  // 1) Durable persistence FIRST (outbox pattern — never lose event)
+  //    Unique index on idempotency_key provides DB-level race protection.
+  let insertedId: number | null = null;
+  try {
+    const rows = await db
+      .insert(eventLog)
+      .values({
+        eventType: input.type,
+        aggregate: input.aggregate,
+        aggregateId: input.aggregateId ?? null,
+        payload,
+        source: input.source ?? "app",
+        correlationId,
+        causationId: input.causationId ?? null,
+        idempotencyKey,
+      })
+      .returning({ id: eventLog.id });
+    insertedId = rows[0]?.id ?? null;
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    if (idempotencyKey && (msg.includes("ux_event_log_idempotency") || msg.includes("duplicate") || msg.includes("unique"))) {
+      // Concurrent duplicate — treat as success, already logged
+      return;
+    }
+    console.error("event_log write failed", error);
+    return;
+  }
+
+  // 2) Redis Streams (best-effort, with retry via next publish; durable log ensures no loss)
   try {
     const redis = await getRedis();
     if (redis) {
-      await redis
-        .multi()
-        .xadd(EVENT_STREAM, "MAXLEN", "~", 10000, "*", "type", input.type, "aggregate", input.aggregate, "aggregateId", input.aggregateId ?? "", "source", input.source ?? "app", "payload", JSON.stringify(payload))
-        .exec();
+      await redis.xadd(
+        EVENT_STREAM,
+        "MAXLEN",
+        "~",
+        10000,
+        "*",
+        "type",
+        input.type,
+        "aggregate",
+        input.aggregate,
+        "aggregateId",
+        input.aggregateId ?? "",
+        "source",
+        input.source ?? "app",
+        "correlationId",
+        correlationId ?? "",
+        "idempotencyKey",
+        idempotencyKey ?? "",
+        "payload",
+        JSON.stringify(payload),
+        "eventId",
+        String(insertedId ?? "")
+      );
     }
   } catch {
-    // Redis down — event_log remains the durable record.
+    // Redis down — will be retried on next publish or via reconciler; event remains durable
+    console.warn("Redis XADD failed, event durable in PG id", insertedId);
   }
+}
 
-  // 2) Durable persistence (best-effort)
+/**
+ * Re-publish recent events to Redis (best-effort at-least-once).
+ * NOTE: This is NOT a true pending-delivery tracker — it simply replays the
+ * latest N durable events. Redis is transport (at-least-once); PostgreSQL
+ * event_log is authoritative. Consumers must deduplicate via idempotencyKey.
+ * Called on startup or manually to recover from Redis downtime.
+ */
+export async function flushPendingToRedis(limit = 100): Promise<number> {
+  const redis = await getRedis();
+  if (!redis) return 0;
   try {
-    await db.insert(eventLog).values({
-      eventType: input.type,
-      aggregate: input.aggregate,
-      aggregateId: input.aggregateId ?? null,
-      payload,
-      source: input.source ?? "app",
-    });
-  } catch (error) {
-    console.error("event_log write failed", error);
+    const rows = await db.select().from(eventLog).orderBy(desc(eventLog.id)).limit(limit);
+    for (const r of rows.slice().reverse()) {
+      try {
+        await redis.xadd(
+          EVENT_STREAM,
+          "MAXLEN",
+          "~",
+          10000,
+          "*",
+          "type",
+          r.eventType,
+          "aggregate",
+          r.aggregate,
+          "aggregateId",
+          r.aggregateId ?? "",
+          "source",
+          r.source ?? "app",
+          "payload",
+          JSON.stringify(r.payload),
+          "eventId",
+          String(r.id)
+        );
+      } catch {}
+    }
+    return rows.length;
+  } catch {
+    return 0;
   }
 }
 

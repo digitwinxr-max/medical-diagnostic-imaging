@@ -4,14 +4,36 @@ import { jwtVerify } from "jose";
 const SESSION_COOKIE = "geraldos_session";
 
 function secretKey(): Uint8Array {
-  const secret = process.env.AUTH_SECRET ?? "geraldos-dev-secret-change-me";
-  return new TextEncoder().encode(secret);
+  const secret = process.env.AUTH_SECRET;
+  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  if (isProd) {
+    if (!secret || secret.length < 32) throw new Error("AUTH_SECRET required in production");
+    return new TextEncoder().encode(secret);
+  }
+  return new TextEncoder().encode(secret ?? "geraldos-dev-secret-change-me-not-for-production");
 }
 
 export async function proxy(request: NextRequest) {
-  // When Keycloak is not configured, run in degraded (bypass) mode so the
-  // platform remains usable while integrations are being deployed.
+  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  // In production, fail closed if Keycloak is not configured — do not silently bypass.
   if (!process.env.KEYCLOAK_URL) {
+    if (isProd) {
+      // Allow only auth/health/webhooks to avoid lockout loop; otherwise 401
+      const { pathname } = request.nextUrl;
+      if (
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/api/auth") ||
+        pathname.startsWith("/api/health") ||
+        pathname.startsWith("/_next") ||
+        pathname === "/favicon.ico"
+      ) {
+        return NextResponse.next();
+      }
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json({ error: "authentication not configured" }, { status: 503 });
+      }
+      return NextResponse.redirect(new URL("/login?error=auth_not_configured", request.nextUrl.origin));
+    }
     return NextResponse.next();
   }
 

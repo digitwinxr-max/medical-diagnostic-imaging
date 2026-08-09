@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GERALDOS — SPRINT 3.5 REPORT · Copy</title>
+<style>
+  :root{--bg:#020617;--panel:#0f172a;--panel2:#1e293b;--border:#1e3a5f;--text:#f1f5f9;--muted:#94a3b8;--brand:#38bdf8;--brand2:#22c55e;--warn:#f59e0b}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;font-family:ui-sans,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:var(--bg)}
+  #copy-bar{position:sticky;top:0;z-index:9999;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#0e7490 100%);border-bottom:2px solid #38bdf8;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+  #copy-bar-left{display:flex;align-items:center;gap:12px;min-width:0}
+  #copy-bar h1{margin:0;font-size:15px;letter-spacing:.04em;font-weight:800;display:flex;align-items:center;gap:8px}
+  #copy-bar h1 span.icon{font-size:18px}
+  #status{font-size:12px;color:#cbd5e1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:6px 10px;border-radius:999px;white-space:nowrap}
+  #status.ok{color:#bbf7d0;border-color:#22c55e;background:rgba(34,197,94,.15)}
+  #status.err{color:#fecdd3;border-color:#f43f5e;background:rgba(244,63,94,.15)}
+  .btn{appearance:none;cursor:pointer;border:0;padding:11px 18px;border-radius:10px;font-weight:800;font-size:14px;line-height:1;display:inline-flex;align-items:center;gap:8px;transition:transform .08s,filter .15s,box-shadow .15s}
+  .btn:active{transform:translateY(1px) scale(.99)}
+  #copyBtn{background:var(--brand);color:#020617;box-shadow:0 4px 14px rgba(56,189,248,.35)}
+  #copyBtn:hover{filter:brightness(1.07);box-shadow:0 6px 18px rgba(56,189,248,.45)}
+  #copyBtn.copied{background:var(--brand2) !important;color:#052e16 !important}
+  #selectBtn{background:var(--panel2);color:#e2e8f0;border:1px solid #334155;font-weight:700}
+  #downloadBtn{background:transparent;color:#e2e8f0;border:1px solid #475569;font-weight:700}
+  .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  main{max-width:980px;margin:0 auto;padding:18px 16px 40px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+  .pill{font-size:11px;color:#94a3b8;border:1px solid #1e3a5f;background:#0f172a;padding:6px 10px;border-radius:999px}
+  .pill a{color:#38bdf8;text-decoration:none}
+  .pill a:hover{text-decoration:underline}
+  pre{margin:0;background:#0f172a;border:1px solid #1e3a5f;border-radius:14px;padding:18px;overflow:auto;max-height:none;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#e2e8f0}
+  @keyframes flash{0%{background:#0f172a}30%{background:rgba(34,197,94,.12)}100%{background:#0f172a}}
+  pre.flash{animation:flash .9s ease}
+</style>
+</head>
+<body>
+<div id="copy-bar" role="toolbar" aria-label="Copy SPRINT 3.5 report">
+  <div id="copy-bar-left">
+    <h1><span class="icon">📋</span> GERALDOS — SPRINT 3.5 REPORT</h1>
+    <span id="status">Loading…</span>
+  </div>
+  <div class="actions">
+    <button id="copyBtn" class="btn" type="button" aria-label="Copy entire report to clipboard">⎘ COPY</button>
+    <button id="selectBtn" class="btn" type="button">Select all</button>
+    <button id="downloadBtn" class="btn" type="button">Download .md</button>
+  </div>
+</div>
+
+<main>
+  <div class="meta">
+    <span class="pill">Branch: <code>arena/019fe55b</code></span>
+    <span class="pill">Phase 3.5 · verification gate · gate: SPRINT_4_BLOCKED</span>
+    <span class="pill"><a href="./SPRINT3_5_REPORT.md" target="_blank" rel="noopener">Open raw docs/SPRINT3_5_REPORT.md</a> — or use COPY above</span>
+    <span class="pill"><a href="./BLUEPRINT.md" target="_blank" rel="noopener">Blueprint</a> · <a href="./blueprint.html">Blueprint COPY bar</a></span>
+  </div>
+  <pre id="content" aria-label="SPRINT 3.5 markdown">Loading docs/SPRINT3_5_REPORT.md…</pre>
+</main>
+
+<script>
+const statusEl = document.getElementById('status');
+const copyBtn  = document.getElementById('copyBtn');
+const selectBtn= document.getElementById('selectBtn');
+const dlBtn    = document.getElementById('downloadBtn');
+const pre      = document.getElementById('content');
+let text = '';
+
+function setStatus(msg, cls){
+  statusEl.textContent = msg;
+  statusEl.className = cls || '';
+}
+
+async function load(){
+  try{
+    const res = await fetch('./SPRINT3_5_REPORT.md', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status+' — is docs/SPRINT3_5_REPORT.md present?');
+    text = await res.text();
+    pre.textContent = text;
+    setStatus('Ready · ' + (text.length/1024).toFixed(0) + ' KB · ' + text.split('\n').length.toLocaleString() + ' lines — click COPY', '');
+  }catch(e){
+    pre.textContent = 'Failed to load docs/SPRINT3_5_REPORT.md:\n' + e.message + '\n\nFallback: open docs/SPRINT3_5_REPORT.md directly and copy manually.';
+    setStatus('Load failed — open raw file', 'err');
+  }
+}
+
+async function doCopy(){
+  if(!text){ setStatus('Nothing loaded yet', 'err'); return; }
+  const original = copyBtn.innerHTML;
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+    }else{
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.setAttribute('readonly','');
+      ta.style.position='fixed'; ta.style.opacity='0'; ta.style.pointerEvents='none';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, ta.value.length);
+      const ok=document.execCommand('copy'); ta.remove();
+      if(!ok) throw new Error('execCommand failed');
+    }
+    copyBtn.innerHTML='✓ COPIED';
+    copyBtn.classList.add('copied');
+    pre.classList.remove('flash'); void pre.offsetWidth; pre.classList.add('flash');
+    setStatus('✓ Copied ' + text.length.toLocaleString() + ' chars — paste anywhere (Ctrl+V)', 'ok');
+    setTimeout(()=>{ copyBtn.innerHTML=original; copyBtn.classList.remove('copied'); setStatus('Ready · click COPY again if needed',''); pre.classList.remove('flash'); }, 2400);
+  }catch(e){
+    setStatus('Clipboard blocked — use Select all → Ctrl+C', 'err');
+    doSelect();
+  }
+}
+
+function doSelect(){
+  const r=document.createRange(); r.selectNodeContents(pre);
+  const s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  setStatus('Selected — press Ctrl+C (or Cmd+C on Mac)', 'ok');
+  pre.classList.remove('flash'); void pre.offsetWidth; pre.classList.add('flash');
+}
+
+function doDownload(){
+  if(!text) return;
+  const blob=new Blob([text],{type:'text/markdown;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='SPRINT3_5_REPORT.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1200);
+  setStatus('Downloaded SPRINT3_5_REPORT.md', 'ok');
+}
+
+copyBtn.addEventListener('click', doCopy);
+selectBtn.addEventListener('click', doSelect);
+dlBtn.addEventListener('click', doDownload);
+
+document.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='c' && !window.getSelection().toString()){
+    if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA') return;
+    e.preventDefault(); doCopy();
+  }
+});
+
+load();
+</script>
+</body>
+</html>

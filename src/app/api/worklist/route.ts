@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     const rank: Record<string, number> = { emergency: 0, stat: 1, urgent: 2, routine: 3, undefined: 4 };
     rows.sort((a, b) => (rank[a.priority ?? "undefined"] ?? 4) - (rank[b.priority ?? "undefined"] ?? 4));
 
-    return NextResponse.json({ ok: true, entries: rows });
+    return NextResponse.json({ ok: true, entries: rows }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: "failed to load worklist", detail: error instanceof Error ? error.message : String(error) },

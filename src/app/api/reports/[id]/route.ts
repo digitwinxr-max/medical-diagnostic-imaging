@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     .leftJoin(staff, eq(reports.radiologistId, staff.id))
     .where(eq(reports.id, id));
   if (!row) return NextResponse.json({ error: "report not found" }, { status: 404 });
-  return NextResponse.json({ ok: true, report: row });
+  return NextResponse.json({ ok: true, report: row }, { headers: { "Cache-Control": "no-store" } });
 }
 
 /**
@@ -59,14 +59,21 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       { status: 400 }
     );
   }
-  // Guard: only radiologists sign. (Role check hooks into session roles when available.)
+  // Guard: only radiologists sign. In production, empty roles never passes.
   if (body.status === "signed") {
     const { verifySessionToken } = await import("@/lib/auth/session");
+    const { isRadiologist } = await import("@/lib/auth/requireRole");
+    const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
     const cookie = request.cookies.get("geraldos_session")?.value;
     const user = cookie ? await verifySessionToken(cookie) : null;
-    const roles = user?.roles ?? [];
-    const isRadiologist = roles.some((r) => /radiolog/i.test(r)) || roles.length === 0; // dev/degraded auth allows sign
-    if (!isRadiologist) {
+    // In production, unauthenticated or empty roles fails closed
+    if (isProd && !user) {
+      return NextResponse.json({ error: "authentication required to sign" }, { status: 401 });
+    }
+    const allowed = isRadiologist(user);
+    // In non-prod, allow empty roles for dev demo only when not in prod
+    const devAllow = !isProd && (!user || (user.roles.length === 0));
+    if (!allowed && !devAllow) {
       return NextResponse.json({ error: "signing requires the radiologist role" }, { status: 403 });
     }
   }
@@ -120,5 +127,5 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     await publishEvent({ type: "report.drafted", aggregate: "report", aggregateId: id, payload: { status: updated.status } });
   }
 
-  return NextResponse.json({ ok: true, report: updated });
+  return NextResponse.json({ ok: true, report: updated }, { headers: { "Cache-Control": "no-store" } });
 }

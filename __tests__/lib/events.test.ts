@@ -4,7 +4,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("@/db", () => ({
   db: {
     insert: vi.fn().mockReturnValue({
-      values: vi.fn().mockResolvedValue(undefined),
+      values: vi.fn().mockReturnValue({
+        returning: vi.fn().mockResolvedValue([{ id: 1 }]),
+      }),
     }),
     select: vi.fn().mockReturnValue({
       from: vi.fn().mockReturnValue({
@@ -12,6 +14,7 @@ vi.mock("@/db", () => ({
           orderBy: vi.fn().mockReturnValue({
             limit: vi.fn().mockResolvedValue([]),
           }),
+          limit: vi.fn().mockResolvedValue([]),
         }),
         orderBy: vi.fn().mockReturnValue({
           limit: vi.fn().mockResolvedValue([]),

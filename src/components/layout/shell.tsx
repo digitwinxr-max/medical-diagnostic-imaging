@@ -17,11 +17,11 @@ export function Shell({ title, description, children, actions }: ShellProps) {
   const { sidebarCollapsed } = useAppShell();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-[var(--color-gerald-bg)] dark:bg-[var(--color-gerald-bg)]">
       <Sidebar />
       <div className={cn("transition-[margin] duration-200", sidebarCollapsed ? "ml-16" : "ml-64")}>
         <Header title={title} description={description} />
-        <main className="p-8">
+        <main className="p-6 lg:p-8">
           {actions && (
             <div className="mb-6 flex items-center justify-between">
               <div />

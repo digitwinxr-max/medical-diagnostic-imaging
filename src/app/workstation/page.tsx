@@ -101,38 +101,38 @@ function WorkstationLayout() {
 
   return (
     <div className="fixed inset-0 z-30 flex flex-col bg-slate-100 dark:bg-slate-950">
-      {/* Top workspace bar */}
-      <div className="flex h-10 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-3 dark:border-slate-800 dark:bg-slate-950">
+      {/* Top workspace bar — premium navy, restrained teal accent */}
+      <div className="flex h-10 shrink-0 items-center justify-between border-b border-white/10 bg-[var(--color-gerald-navy)] px-3">
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-hover text-white transition-opacity hover:opacity-80" title="Back to Command Centre">
+          <Link href="/" className="flex h-6 w-6 items-center justify-center rounded-md bg-white/10 text-white transition-colors hover:bg-white/15" title="Back to Command Centre">
             <ChevronLeft className="h-4 w-4" />
           </Link>
-          <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-md bg-white">
+          <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-md bg-white shadow-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/gh-logo.png" alt="GH logo" className="h-5 w-5 object-contain" />
           </span>
-          <span className="text-[12px] font-semibold text-slate-800 dark:text-slate-100">Radiologist Workstation</span>
-          <span className="hidden text-[10px] text-slate-400 md:inline">Fluent in Imaging · reporting · AI review — one workspace</span>
+          <span className="text-[12px] font-semibold tracking-tight text-white">Radiologist Workstation</span>
+          <span className="hidden text-[10px] font-medium tracking-wide text-white/60 md:inline">GERALD HOLDINGS · Fluent in Imaging</span>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => setShowPalette(true)} title="Command palette (Ctrl+K)" className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-medium text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800">
+          <button onClick={() => setShowPalette(true)} title="Command palette (Ctrl+K)" className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white">
             <Command className="h-3.5 w-3.5" />
-            <kbd className="hidden rounded border border-slate-200 px-1 py-px font-mono text-[9px] dark:border-slate-700 lg:inline">⌘K</kbd>
+            <kbd className="hidden rounded border border-white/20 bg-white/10 px-1 py-px font-mono text-[9px] text-white/70 lg:inline">⌘K</kbd>
           </button>
-          <button onClick={() => setShowShortcuts((s) => !s)} title="Keyboard shortcuts (Alt+H)" className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800">
+          <button onClick={() => setShowShortcuts((s) => !s)} title="Keyboard shortcuts (Alt+H)" className="rounded-md p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white">
             <Keyboard className="h-4 w-4" />
           </button>
-          <button onClick={() => updateLayout({ bottomOpen: !layout.bottomOpen })} title="Toggle bottom panel" className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800">
+          <button onClick={() => updateLayout({ bottomOpen: !layout.bottomOpen })} title="Toggle bottom panel" className="rounded-md p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white">
             <PanelBottom className="h-4 w-4" />
           </button>
-          <button onClick={() => updateLayout({ leftWidth: layout.leftWidth > 0 ? 0 : 320 })} title="Toggle worklist" className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800">
+          <button onClick={() => updateLayout({ leftWidth: layout.leftWidth > 0 ? 0 : 320 })} title="Toggle worklist" className="rounded-md p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white">
             <PanelLeft className="h-4 w-4" />
           </button>
-          <button onClick={() => updateLayout({ rightWidth: layout.rightWidth > 0 ? 0 : 380 })} title="Toggle clinical panel" className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800">
+          <button onClick={() => updateLayout({ rightWidth: layout.rightWidth > 0 ? 0 : 380 })} title="Toggle clinical panel" className="rounded-md p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white">
             <PanelRight className="h-4 w-4" />
           </button>
-          <div className="mx-1 h-4 w-px bg-slate-200 dark:bg-slate-800" />
-          <button onClick={toggleFullscreen} title="Fullscreen (F11)" className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800">
+          <div className="mx-1 h-4 w-px bg-white/15" />
+          <button onClick={toggleFullscreen} title="Fullscreen (F11)" className="rounded-md p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white">
             {fullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </button>
         </div>

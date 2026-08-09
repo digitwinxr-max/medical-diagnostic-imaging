@@ -28,7 +28,7 @@ export async function GET() {
       .leftJoin(staff, eq(reports.radiologistId, staff.id))
       .orderBy(desc(reports.createdAt));
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch reports" }, { status: 500 });
   }

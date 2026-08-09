@@ -34,10 +34,10 @@ export function Header({ title, description }: { title: string; description?: st
     : null;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-8 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/95">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[var(--color-gerald-border)] bg-white/90 px-6 lg:px-8 backdrop-blur-md dark:border-[var(--color-gerald-border)] dark:bg-[var(--color-gerald-surface)]/90">
       <div className="min-w-0">
-        <h1 className="truncate text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h1>
-        {description && <p className="truncate text-sm text-slate-500 dark:text-slate-400">{description}</p>}
+        <h1 className="truncate text-[17px] font-semibold tracking-tight text-[var(--color-gerald-text)] dark:text-[var(--color-gerald-text)]">{title}</h1>
+        {description && <p className="truncate text-sm text-[var(--color-gerald-muted)]">{description}</p>}
       </div>
       <div className="flex items-center gap-3">
         {/* Command palette trigger */}

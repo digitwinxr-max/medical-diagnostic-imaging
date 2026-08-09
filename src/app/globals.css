@@ -4,139 +4,198 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ══════════════════════════════════════════════════════════════════
-   GERALD HOLDINGS BRAND COLOUR SYSTEM
-   ══════════════════════════════════════════════════════════════════
-   Raw palette + semantic tokens. Semantic utilities resolve through
-   CSS custom properties so the `.dark` overrides re-theme every
-   `bg-brand-*`, `text-ai-*`, etc. usage automatically.
-
-   Hierarchy:  AZURE = brand / diagnostic core
-               VIOLET = AI / intelligence
-               GREEN = operational health
-               GOLD = premium / executive / finance
-*/
+   GERALD HOLDINGS — PREMIUM HEALTHCARE BRAND SYSTEM
+   Deep Navy · Rich Teal · Medical Aqua · Champagne Gold
+   Calm clinical clarity for serious diagnostic operations.
+   Raw palette + semantic + status tokens. Dark overrides re-theme
+   every bg-brand-*, text-ai-*, etc. automatically.
+   ══════════════════════════════════════════════════════════════════ */
 @theme {
-  /* ── Raw Gerald palette ── */
+  /* ── Gerald Holdings raw palette ── */
+  --color-gerald-navy: #0A1931;
+  --color-gerald-navy-800: #0F2042;
+  --color-gerald-navy-700: #142a54;
+  --color-gerald-navy-soft: #e6eaf0;
+  --color-gerald-navy-muted: #8a9ab5;
+
+  --color-gerald-teal: #0E7A8B;
+  --color-gerald-teal-deep: #0A5F6D;
+  --color-gerald-teal-soft: #d6eef2;
+  --color-gerald-teal-ring: #1a9aba;
+
+  --color-gerald-aqua: #2EB5A6;
+  --color-gerald-aqua-deep: #25968a;
+  --color-gerald-aqua-soft: #d9f2ef;
+
+  --color-gerald-gold: #C4A86A;
+  --color-gerald-gold-deep: #a68b4f;
+  --color-gerald-gold-soft: #f5ecd6;
+
+  /* Legacy — kept for backward compat (do not use in new code) */
   --color-gerald-azure: #40bef0;
   --color-gerald-azure-deep: #1c9ad0;
   --color-gerald-azure-soft: #ddf5fd;
-
   --color-gerald-violet: #ac78c2;
   --color-gerald-violet-deep: #85509d;
   --color-gerald-violet-soft: #f1e6f4;
-
-  --color-gerald-gold: #c2a328;
-  --color-gerald-gold-deep: #d5b63d;
-  --color-gerald-gold-soft: #f6f0d5;
-
   --color-gerald-green: #76a63d;
   --color-gerald-green-deep: #5d8d2e;
   --color-gerald-green-soft: #e8f1db;
 
-  /* ── Semantic: brand (Azure) ── */
-  --color-brand: var(--color-gerald-azure);
-  --color-brand-hover: var(--color-gerald-azure-deep);
-  --color-brand-active: #1683b1;
-  --color-brand-soft: var(--color-gerald-azure-soft);
-  --color-brand-text: #0e76a3;
+  /* ── Surfaces & typography ── */
+  --color-gerald-bg: #f1f5f9;
+  --color-gerald-surface: #ffffff;
+  --color-gerald-surface-elevated: #ffffff;
+  --color-gerald-border: #e2e8f0;
+  --color-gerald-border-strong: #cbd5e1;
+  --color-gerald-text: #0f172a;
+  --color-gerald-text-secondary: #334155;
+  --color-gerald-muted: #64748b;
+  --color-gerald-muted-soft: #f8fafc;
 
-  /* ── Semantic: AI (Violet) ── */
-  --color-ai: var(--color-gerald-violet);
-  --color-ai-hover: var(--color-gerald-violet-deep);
-  --color-ai-active: #6f3f87;
-  --color-ai-soft: var(--color-gerald-violet-soft);
-  --color-ai-text: #6c3d84;
+  /* ── Semantic: brand (Teal — primary interactive) ── */
+  --color-brand: var(--color-gerald-teal);
+  --color-brand-hover: var(--color-gerald-teal-deep);
+  --color-brand-active: #084a56;
+  --color-brand-soft: var(--color-gerald-teal-soft);
+  --color-brand-text: #0a5f6d;
 
-  /* ── Semantic: premium / executive (Gold) ── */
+  /* ── Semantic: AI / technology (Aqua — calm assistive) ── */
+  --color-ai: var(--color-gerald-aqua);
+  --color-ai-hover: var(--color-gerald-aqua-deep);
+  --color-ai-active: #1d7a72;
+  --color-ai-soft: var(--color-gerald-aqua-soft);
+  --color-ai-text: #1a7a72;
+
+  /* ── Semantic: premium / executive (Gold — sparingly) ── */
   --color-premium: var(--color-gerald-gold);
   --color-premium-hover: var(--color-gerald-gold-deep);
-  --color-premium-active: #a38b1e;
+  --color-premium-active: #8c7340;
   --color-premium-soft: var(--color-gerald-gold-soft);
-  --color-premium-text: #8a6f1b;
+  --color-premium-text: #7a5f2e;
 
-  /* ── Semantic: operational health (Green) ── */
-  --color-operational: var(--color-gerald-green);
-  --color-operational-hover: var(--color-gerald-green-deep);
-  --color-operational-active: #4c7526;
-  --color-operational-soft: var(--color-gerald-green-soft);
-  --color-operational-text: #4c7426;
+  /* ── Semantic: operational health (Teal-adjacent, not violet) ── */
+  --color-operational: #0e7a6e;
+  --color-operational-hover: #0a5f56;
+  --color-operational-active: #084a44;
+  --color-operational-soft: #d6ecea;
+  --color-operational-text: #0a5f56;
+
+  /* ── Shell / chrome (Navy) ── */
+  --color-shell: var(--color-gerald-navy);
+  --color-shell-hover: var(--color-gerald-navy-800);
+  --color-shell-soft: var(--color-gerald-navy-soft);
+
+  /* ── Status — semantically independent from brand ── */
+  --color-status-success: #16a34a;
+  --color-status-success-soft: #dcfce7;
+  --color-status-warning: #d97706;
+  --color-status-warning-soft: #fef3c7;
+  --color-status-critical: #dc2626;
+  --color-status-critical-soft: #fee2e2;
+  --color-status-info: #0e7a8b;
+  --color-status-info-soft: #d6eef2;
 }
 
-/* Dark-mode semantic overrides: soft tints become translucent dark
-   washes instead of pale pastels; text tokens lighten for contrast. */
 @layer base {
   *,
   *::before,
   *::after {
-    border-color: var(--color-slate-200);
+    border-color: var(--color-gerald-border);
   }
 
-  .dark {
-    color-scheme: dark;
-    --color-brand-soft: rgb(28 154 208 / 0.16);
-    --color-brand-text: #8cdcf9;
-    --color-ai-soft: rgb(133 80 157 / 0.22);
-    --color-ai-text: #d0b3dd;
-    --color-premium-soft: rgb(194 163 40 / 0.16);
-    --color-premium-text: #e3ce7a;
-    --color-operational-soft: rgb(93 141 46 / 0.18);
-    --color-operational-text: #b8d493;
+  /* Light — Gerald Light: bright clinical, navy typography, teal interactive, cool-grey bg */
+  html {
+    scrollbar-gutter: stable;
   }
 
   body {
-    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--color-gerald-bg);
+    color: var(--color-gerald-text);
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Focus — teal ring, AA contrast */
+  :where(a, button, [role="button"], input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-gerald-teal-ring);
+    outline-offset: 2px;
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--color-gerald-teal-soft);
+    color: var(--color-gerald-navy);
+  }
+
+  /* Dark — Gerald Dark: deep navy/charcoal, elevated blue-grey panels, teal active, no pure black */
+  .dark {
+    color-scheme: dark;
+    --color-gerald-bg: #0b1220;
+    --color-gerald-surface: #111d33;
+    --color-gerald-surface-elevated: #152642;
+    --color-gerald-border: #1e3358;
+    --color-gerald-border-strong: #264070;
+    --color-gerald-text: #e2e8f0;
+    --color-gerald-text-secondary: #cbd5e1;
+    --color-gerald-muted: #94a3b8;
+    --color-gerald-muted-soft: #0f1e36;
+
+    --color-brand-soft: rgb(14 122 139 / 0.18);
+    --color-brand-text: #7ed6e6;
+    --color-ai-soft: rgb(46 181 166 / 0.16);
+    --color-ai-text: #7de0d5;
+    --color-premium-soft: rgb(196 168 106 / 0.14);
+    --color-premium-text: #e6d5a8;
+    --color-operational-soft: rgb(14 122 110 / 0.18);
+    --color-operational-text: #7dd5cc;
+
+    --color-status-success-soft: rgb(22 163 74 / 0.16);
+    --color-status-warning-soft: rgb(217 119 6 / 0.16);
+    --color-status-critical-soft: rgb(220 38 38 / 0.18);
+    --color-status-info-soft: rgb(14 122 139 / 0.16);
+  }
+
+  .dark body {
+    background: var(--color-gerald-bg);
   }
 }
 
-/* ─── Scrollbars ─── */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgb(148 163 184 / 0.4);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(100 116 139 / 0.6);
-}
+/* ─── Premium typography rhythm ─── */
+h1, h2, h3, h4 { letter-spacing: -0.015em; }
+h1 { font-weight: 750; }
+h2, h3 { font-weight: 680; }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+/* ─── Scrollbars — premium, not gaming ─── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(148 163 184 / 0.35); border-radius: 9999px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgb(100 116 139 / 0.5); border: 2px solid transparent; background-clip: content-box; }
+.dark ::-webkit-scrollbar-thumb { background: rgb(71 85 105 / 0.5); border: 2px solid transparent; background-clip: content-box; }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgb(100 116 139 / 0.6); border: 2px solid transparent; background-clip: content-box; }
 
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
+/* ─── Motion — 150–250ms, smooth, no glow ─── */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes slide-in-from-bottom { from { transform: translateY(6px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes scan-line { 0% { top: 0%; } 100% { top: 96%; } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
-@keyframes slide-in-from-bottom {
-  from { transform: translateY(4px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-slide-up { animation: slide-in-from-bottom 0.22s cubic-bezier(0.16,1,0.3,1); }
+.pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
+/* ─── Gerald shell helpers ─── */
+.gerald-shell { background: var(--color-gerald-navy); color: #e2e8f0; }
+.gerald-card { background: var(--color-gerald-surface); border: 1px solid var(--color-gerald-border); box-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 4px 12px rgb(15 23 42 / 0.04); }
+.dark .gerald-card { box-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 8px 24px rgb(0 0 0 / 0.35); }
 
-@keyframes scan-line {
-  0% { top: 0%; }
-  100% { top: 96%; }
-}
+/* ─── Status dot — never colour-alone; always with label ─── */
+.status-dot { width: 8px; height: 8px; border-radius: 9999px; display: inline-block; flex-shrink: 0; }
 
-.animate-fade-in {
-  animation: fade-in 0.2s ease-out;
-}
-
-.animate-slide-up {
-  animation: slide-in-from-bottom 0.2s ease-out;
-}
-
-.pulse-dot {
-  animation: pulse-dot 1.6s ease-in-out infinite;
-}
+/* ─── Transitions for interactive elements ─── */
+button, a, [role="button"] { transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, opacity 150ms ease; }

@@ -451,7 +451,23 @@ export const eventLog = pgTable("event_log", {
   aggregateId: varchar("aggregate_id", { length: 128 }),
   payload: jsonb("payload"),
   source: varchar("source", { length: 100 }).default("app").notNull(),
+  correlationId: varchar("correlation_id", { length: 128 }),
+  causationId: varchar("causation_id", { length: 128 }),
+  idempotencyKey: varchar("idempotency_key", { length: 200 }),
   occurredAt: timestamp("occurred_at").defaultNow().notNull(),
+});
+
+export const reconciliationFailures = pgTable("reconciliation_failures", {
+  id: serial("id").primaryKey(),
+  orthancChangeId: integer("orthanc_change_id"),
+  studyInstanceUid: varchar("study_instance_uid", { length: 128 }),
+  orthancStudyId: varchar("orthanc_study_id", { length: 128 }),
+  failureReason: text("failure_reason").notNull(),
+  retryCount: integer("retry_count").default(0).notNull(),
+  status: varchar("status", { length: 20 }).default("pending").notNull(),
+  payload: jsonb("payload"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
 });
 
 export const notifications = pgTable("notifications", {

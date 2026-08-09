@@ -8,6 +8,13 @@
       "when": 1786027018429,
       "tag": "0000_redundant_the_twelve",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786027018430,
+      "tag": "0001_secure_baseline",
+      "breakpoints": true
     }
   ]
 }

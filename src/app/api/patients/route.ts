@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       ? await db.select().from(patients).where(conditions).orderBy(desc(patients.createdAt))
       : await db.select().from(patients).orderBy(desc(patients.createdAt));
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch patients" }, { status: 500 });
   }
