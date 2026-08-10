@@ -18,7 +18,10 @@ export const dynamic = "force-dynamic";
  *   { priority: "stat" }                          plain field update (no stage change)
  */
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["radiographer", "radiologist", "administrator"]);
+  if (authError) return authError;
+try {
     const { id } = await params;
     const body = await request.json().catch(() => null);
     if (!body || typeof body !== "object") {

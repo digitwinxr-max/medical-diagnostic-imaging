@@ -49,6 +49,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "invalid body" }, { status: 400 });
 
+  const { requireRoleOrFail: requireReportRole } = await import("@/lib/auth/requireRole");
+  const { error: reportAuthError } = await requireReportRole(request as unknown as Request, ["radiologist", "administrator"]);
+  if (reportAuthError) return reportAuthError;
   const [existing] = await db.select().from(reports).where(eq(reports.id, id));
   if (!existing) return NextResponse.json({ error: "report not found" }, { status: 404 });
 

@@ -9,7 +9,16 @@
  *
  * `extensions`/`modes` must be arrays (the standalone ohif/app bundle carries
  * the actual implementations) — omitting them breaks app boot.
+ *
+ * Deployment-portable: GeraldOS origin is resolved at runtime from
+ * NEXT_PUBLIC_APP_URL (build-time) or window.GERALDOS_APP_URL or by
+ * deriving from OHIF location (3001 -> 3000) for local dev. Do not hardcode
+ * production hostnames here.
  */
+var geraldosUrl = (typeof window !== 'undefined' && (window.NEXT_PUBLIC_APP_URL || window.GERALDOS_APP_URL)) || 'http://localhost:3000';
+if (typeof window !== 'undefined' && window.location && window.location.origin && window.location.port === '3001' && !window.NEXT_PUBLIC_APP_URL && !window.GERALDOS_APP_URL) {
+  geraldosUrl = window.location.origin.replace(':3001', ':3000');
+}
 window.config = {
   routerBasename: '/',
   extensions: [],
@@ -29,10 +38,10 @@ window.config = {
       configuration: {
         friendlyName: 'GeraldOS DICOMweb (Orthanc)',
         name: 'Orthanc',
-        wadoUriRoot: 'http://localhost:3000/api/orthanc/dicom-web',
-        qidoRoot: 'http://localhost:3000/api/orthanc/dicom-web',
-        stowRoot: 'http://localhost:3000/api/orthanc/dicom-web',
-        wadoRoot: 'http://localhost:3000/api/orthanc/dicom-web',
+        wadoUriRoot: geraldosUrl + '/api/orthanc/dicom-web',
+        qidoRoot: geraldosUrl + '/api/orthanc/dicom-web',
+        stowRoot: geraldosUrl + '/api/orthanc/dicom-web',
+        wadoRoot: geraldosUrl + '/api/orthanc/dicom-web',
         requestOptions: {
           headers: {
             Accept: 'application/json',

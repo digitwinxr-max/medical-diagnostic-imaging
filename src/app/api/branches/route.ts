@@ -17,7 +17,10 @@ export async function GET() {
 
 /** POST /api/branches { name, code, address, phone, email, managerName, status } */
 export async function POST(request: NextRequest) {
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator"]);
+  if (authError) return authError;
+try {
     const body = await request.json();
     if (!body?.name || !body?.code) {
       return NextResponse.json({ error: "name and code are required" }, { status: 400 });

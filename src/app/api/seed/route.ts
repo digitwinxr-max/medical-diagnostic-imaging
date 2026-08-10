@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import {
   patients,
@@ -49,7 +49,27 @@ const MEDICAL_AIDS = [
   "MMI Botswana",
 ] as const;
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  // Defense-in-depth: production seeding is impossible
+  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  if (isProd) {
+    return NextResponse.json({ error: "Seeding is disabled in production" }, { status: 403 });
+  }
+  // Non-production still requires administrator
+  try {
+    const { verifySessionToken } = await import("@/lib/auth/session");
+    const { hasRole } = await import("@/lib/auth/requireRole");
+    const cookie = request.cookies.get("geraldos_session")?.value;
+    const user = cookie ? await verifySessionToken(cookie) : null;
+    const isAdmin = user ? hasRole(user, "administrator") || hasRole(user, /admin/i) : false;
+    // Allow unauthenticated only when DEV_AUTH and no Keycloak (dev demo seeding)
+    const allowDevSeed = !isAdmin && !user && process.env.DEV_AUTH === "true" && !process.env.KEYCLOAK_URL;
+    if (!isAdmin && !allowDevSeed) {
+      return NextResponse.json({ error: "Seeding requires administrator role" }, { status: 403 });
+    }
+  } catch {
+    return NextResponse.json({ error: "Seeding requires administrator role" }, { status: 403 });
+  }
   // Clean slate so re-seeding always yields exactly one consistent dataset.
   // Children first to satisfy foreign keys; each delete is isolated so a
   // missing table never aborts the seed.

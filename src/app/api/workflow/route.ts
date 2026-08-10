@@ -53,6 +53,9 @@ export async function GET() {
  * flows through the state machine exactly like every other study.
  */
 export async function POST(request: NextRequest) {
+  const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["radiographer", "radiologist", "administrator", "receptionist"]);
+  if (authError) return authError;
   try {
     const body = await request.json().catch(() => null);
     if (!body) return NextResponse.json({ error: "invalid body" }, { status: 400 });

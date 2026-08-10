@@ -25,6 +25,7 @@ services:
       retries: 20
 
   minio:
+    profiles: ["storage", "optional"]
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     environment:
@@ -55,8 +56,9 @@ services:
       retries: 20
 
   keycloak:
+    profiles: ["auth", "optional"]
     image: quay.io/keycloak/keycloak:latest
-    command: start-dev
+    command: start-dev # DEV/PREVIEW ONLY — production must use externally configured OIDC
     environment:
       KC_HOSTNAME: localhost
       KEYCLOAK_ADMIN: admin
@@ -65,6 +67,7 @@ services:
     volumes: [keycloakdata:/opt/keycloak/data]
 
   hapi-fhir:
+    profiles: ["fhir", "optional"]
     image: hapiproject/hapi:latest
     ports: ["8090:8080"]
     environment:
@@ -76,10 +79,12 @@ services:
         condition: service_healthy
 
   dicoogle:
+    profiles: ["search", "optional"]
     image: bioinformatics-ua/dicoogle:latest
     ports: ["8095:8080"]
 
   n8n:
+    profiles: ["automation", "optional"]
     image: n8nio/n8n:latest
     ports: ["5678:5678"]
     environment:

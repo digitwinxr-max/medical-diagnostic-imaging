@@ -15,6 +15,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator"]);
+  if (authError) return authError;
   const { id } = await params;
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "invalid body" }, { status: 400 });
@@ -40,6 +43,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 }
 
 export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: delAuthError } = await requireRoleOrFail(_request as unknown as Request, ["administrator"]);
+  if (delAuthError) return delAuthError;
   const { id } = await params;
   const [doc] = await db.delete(knowledgeDocuments).where(eq(knowledgeDocuments.id, id)).returning();
   if (!doc) return NextResponse.json({ error: "document not found" }, { status: 404 });

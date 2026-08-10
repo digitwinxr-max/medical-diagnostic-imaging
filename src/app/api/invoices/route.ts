@@ -44,7 +44,10 @@ interface LineItemInput {
 }
 
 export async function POST(request: NextRequest) {
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator", "manager"]);
+  if (authError) return authError;
+try {
     const body = await request.json();
     const lineItems: LineItemInput[] = body.lineItems ?? [];
     const subtotal = lineItems.reduce((sum, li) => sum + li.quantity * li.unitPrice, 0);

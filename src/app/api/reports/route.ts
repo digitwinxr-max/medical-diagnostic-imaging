@@ -35,6 +35,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error } = await requireRoleOrFail(request as unknown as Request, ["radiologist", "administrator"]);
+  if (error) return error;
   try {
     const body = await request.json();
     const result = await db.insert(reports).values(body).returning();

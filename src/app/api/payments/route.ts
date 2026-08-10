@@ -33,7 +33,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator", "manager"]);
+  if (authError) return authError;
+try {
     const body = await request.json();
     const { invoiceId, patientId, amount, method, reference, receivedBy, notes } = body;
 

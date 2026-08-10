@@ -55,12 +55,24 @@ async function proxy(request: NextRequest, segments: string[]) {
       signal: AbortSignal.timeout(60_000),
     });
     const buffer = await res.arrayBuffer();
+    // CORS is restricted to the configured application origin + OHIF origin
+    // (same-origin is sufficient for workstation iframe; wildcard is removed)
+    const requestOrigin = request.headers.get("origin");
+    const allowedOrigins = [
+      process.env.NEXT_PUBLIC_APP_URL,
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ].filter(Boolean) as string[];
+    const allowOrigin = requestOrigin && allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0];
+    const corsHeaders: Record<string, string> = {
+      "content-type": res.headers.get("content-type") ?? "application/json",
+    };
+    if (allowOrigin) corsHeaders["access-control-allow-origin"] = allowOrigin;
+    // Only set Vary when CORS is used
+    if (allowOrigin) corsHeaders["vary"] = "Origin";
     return new Response(buffer, {
       status: res.status,
-      headers: {
-        "content-type": res.headers.get("content-type") ?? "application/json",
-        "access-control-allow-origin": "*",
-      },
+      headers: corsHeaders,
     });
   } catch (error) {
     return new Response(
@@ -90,14 +102,25 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   return proxy(request, path ?? []);
 }
 
-export async function OPTIONS(_request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+export async function OPTIONS(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   await params;
+  const requestOrigin = request.headers.get("origin");
+  const allowedOrigins = [
+    process.env.NEXT_PUBLIC_APP_URL,
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ].filter(Boolean) as string[];
+  const allowOrigin = requestOrigin && allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0] ?? "";
+  const headers: Record<string, string> = {
+    "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "access-control-allow-headers": "content-type, accept, authorization",
+  };
+  if (allowOrigin) {
+    headers["access-control-allow-origin"] = allowOrigin;
+    headers["vary"] = "Origin";
+  }
   return new Response(null, {
     status: 204,
-    headers: {
-      "access-control-allow-origin": "*",
-      "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "access-control-allow-headers": "content-type, accept, authorization",
-    },
+    headers,
   });
 }

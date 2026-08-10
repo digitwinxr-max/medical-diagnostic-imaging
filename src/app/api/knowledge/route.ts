@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
   if (!body?.title || !body?.category || !body?.content) {
     return NextResponse.json({ error: "title, category and content are required" }, { status: 400 });
   }
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator"]);
+  if (authError) return authError;
+try {
     const [doc] = await db
       .insert(knowledgeDocuments)
       .values({

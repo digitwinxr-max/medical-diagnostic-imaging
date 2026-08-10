@@ -7,7 +7,10 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator", "manager"]);
+  if (authError) return authError;
+try {
     const { id } = await params;
     const body = await request.json();
     const updates: Record<string, unknown> = { ...body, updatedAt: new Date() };

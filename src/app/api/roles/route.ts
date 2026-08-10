@@ -39,7 +39,10 @@ function normalizePermissions(value: unknown): string[] {
 }
 
 export async function POST(request: NextRequest) {
-  try {
+    const { requireRoleOrFail } = await import("@/lib/auth/requireRole");
+  const { error: authError } = await requireRoleOrFail(request as unknown as Request, ["administrator"]);
+  if (authError) return authError;
+try {
     const body = await request.json();
     const result = await db
       .insert(roles)
