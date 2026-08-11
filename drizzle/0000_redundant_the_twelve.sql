@@ -125,7 +125,8 @@ CREATE TABLE "event_log" (
 	"aggregate_id" varchar(128),
 	"payload" jsonb,
 	"source" varchar(100) DEFAULT 'app' NOT NULL,
-	"occurred_at" timestamp DEFAULT now() NOT NULL
+	"occurred_at" timestamp DEFAULT now() NOT NULL,
+	"idempotency_key" varchar(200)
 );
 --> statement-breakpoint
 CREATE TABLE "expenses" (
