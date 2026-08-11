@@ -57,6 +57,7 @@ export async function GET() {
   const clinicalHealthy = clinicalKeys.every((k) => services[k]?.status === "healthy");
   const ctAvailable = services.orthanc?.status === "healthy" ? "check Orthanc studies via /api/orthanc/studies" : "orthanc offline";
 
+  const statusCode = clinicalHealthy ? 200 : 503;
   return NextResponse.json(
     {
       status: overall,
@@ -66,6 +67,6 @@ export async function GET() {
       services,
       ctAvailable,
     },
-    { headers: { "Cache-Control": "no-store" } }
+    { status: statusCode, headers: { "Cache-Control": "no-store" } }
   );
 }
