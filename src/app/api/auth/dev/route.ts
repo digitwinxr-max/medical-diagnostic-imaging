@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
  * wired up (or when DEV_AUTH=true). Keeps the platform demoable in degraded mode.
  */
 export async function GET(request: NextRequest) {
-  const isProd = process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production";
+  const isProd = (process.env.NODE_ENV === "production" || process.env.GERALDOS_ENV === "production") && process.env.DEV_AUTH !== "true";
   if (isProd) {
     return NextResponse.redirect(new URL("/login?error=dev_auth_disabled", request.nextUrl.origin));
   }
