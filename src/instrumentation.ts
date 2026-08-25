@@ -1,5 +1,8 @@
 export async function register() {
-  if (typeof window === "undefined") {
+  if (
+    typeof window === "undefined" &&
+    process.env.NEXT_PHASE !== "phase-production-build"
+  ) {
     try {
       const { startReconcilerPoll } = await import("./lib/reconciler-poll");
       startReconcilerPoll();
@@ -8,3 +11,4 @@ export async function register() {
     }
   }
 }
+

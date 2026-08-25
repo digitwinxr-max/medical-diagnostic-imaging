@@ -1,0 +1,8 @@
+{
+  "name": "Medical Diagnostic Imaging",
+  "description": "Medical Diagnostic Imaging Operations Platform by Gerald Holdings — Fluent in Imaging",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
